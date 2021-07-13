@@ -34,7 +34,7 @@ ossFileTransferClient를 빌드하려면 [WIKI:Build](https://github.com/Hunesio
 기존  솔루션에  개방형OS 클라이언트를  추가하는  것이므로  윈도우용  클라이언트에서  지원하는  기능을  전환하여  개발하며 각각의  기능  모듈  단위로  소스를  공개합니다.
 
 ## **기여**
-[CONTRIBUTION.md](https://github.com/Hunesion/ossNacClient/blob/master/CONTRIBUTING.md) 파일을  읽어  주십시오. 당사의  행동강령과  요청접수  절차에  대한  자세한  내용을  확인하실  수  있습니다. 
+[CONTRIBUTION.md](https://github.com/Hunesion/ossNacClient/blob/master/CONTRIBUTING.md) 파일을  읽어  주십시오. 당사의  행동강령과  요청접수  절차에  대한  자세한  내용을  확인하실  수  있습니다.
 
 
 ## **라이선스**
