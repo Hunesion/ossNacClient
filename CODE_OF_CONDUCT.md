@@ -57,4 +57,4 @@
 
 이 행동 강령은 http://contributor-covenant.org/version/1/4 에 있는 [Contributor Covenant][homepage] 버전 1.4에서 수정되었습니다 .
 
-[homepage]: https://www.contributor-covenant.org
+[homepage]: https://www.contributor-covenant.org 
