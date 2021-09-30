@@ -4,14 +4,10 @@ Especially this project is targetting (but not limitted to) the following platfo
 *Tmax OS
 *harmonica OS
 
-
-
 Network Access Control solution is for protection network from malicious endpoints
 There are many types of endpoints, Windows, linux, MAC OS. But to the recent days,
 Most of NAC clients only supports Windows platform. This project aims on developing
 NAC clients on linux platform especially on Korean Open OS.
-
-
 
 So we have to develop
 - User Authentication meechanism and its user interfaces
