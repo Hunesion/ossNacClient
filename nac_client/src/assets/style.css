@@ -1,0 +1,52 @@
+#default_background_window {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    opacity: 1;
+}
+
+#entry_default {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #DEDEDF;
+    border-radius: 4px;
+    opacity: 1;
+
+    font: 12px Noto Sans CJK KR;
+    letter-spacing: -0.01px;
+    color: #000000;
+}
+
+#button_login {
+    background: #114ab5 0% 0% no-repeat padding-box;
+    border-radius: 4px;
+    opacity: 1;
+    font: 13px Noto Sans CJK KR;
+    letter-spacing: 0;
+    color: #FFFFFF;
+}
+
+#checkbox_id_save {
+    font: 10px Noto Sans CJK KR;
+    letter-spacing: -0.01px;
+    color: #6C757D;
+    opacity: 1;
+}
+
+#label_login {
+    font: 18px Noto Sans CJK KR;
+    letter-spacing: -0.01px;
+    color: #000000;
+    opacity: 1;
+}
+
+#label_state {
+    font: 11px Noto Sans CJK KR;
+    letter-spacing: -0.01px;
+    color: #000000;
+    opacity: 1;
+}
+
+#label_state_txt {
+    font: 11px Noto Sans CJK KR;
+    letter-spacing: -0.01px;
+    color: #0f79ff;
+    opacity: 1;
+}
