@@ -26,7 +26,7 @@
 이  지침에  따라  개발  프로젝트에  참여할  수  있습니다.
 
 ### **빌드하기**
-ossFileTransferClient를 빌드하려면 [WIKI:Build](https://github.com/Hunesion/ossNacClient/wiki/Build)를 참조하십시오.
+ossNacClient를 빌드하려면 [WIKI:Build](https://github.com/Hunesion/ossNacClient/wiki/Build)를 참조하십시오.
 
 ## **전제조건**
 이  프로젝트는  각각의  개방형OS를  공통적으로  지원하기  위해 GTK+ 3.0 기반으로  개발할  예정입니다.
