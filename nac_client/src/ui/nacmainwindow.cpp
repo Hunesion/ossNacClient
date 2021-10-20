@@ -42,17 +42,24 @@ gpointer hune_ui_get_main_window()
 
 //////////  FTC 함수  //////////
 static void nac_main_window_login_button_logic(NacMainWindow *main_window);
+
 static void nac_main_window_on_click_btn_login(GtkWidget *widget, gpointer user_data);
+
 static void nac_main_window_on_key_release_event(GtkWidget *widget, GdkEventKey *keydata);
+
 static void nac_main_window_do_login(NacMainWindow *main_window);
+
 static void nac_main_window_login_result_event(void *target, Hune::Core::Event *event);
+
 static void nac_main_window_do_logout(NacMainWindow *main_window);
+
 static void nac_main_window_logout_result_event(void *target, Hune::Core::Event *event);
+
 static void nac_main_window_login_widget_sensitive(NacMainWindow *main_window, bool is_sensitive);
+
 static void nac_main_window_login_complete(NacMainWindow *main_window);
+
 static void nac_main_window_login_associated(NacMainWindow *main_window);
-
-
 
 
 static void 
@@ -94,7 +101,7 @@ nac_main_window_init (NacMainWindow *win)
         event_mgr->addEventListener(win, HUNE_CORE_IONEX_LOGOUT, HUNE_CALLBACK_CLS_STATIC_2(nac_main_window_logout_result_event));
     }
 
-    ionexInit();
+    Ionex::Init();
 }
 
 static void
@@ -107,6 +114,10 @@ nac_main_window_dispose (GObject *object)
     }
 
     if (s_win) {
+        if (priv->is_login_complete) {
+            nac_main_window_do_logout(s_win);
+        }
+
         s_win = NULL ; 
     }
 
@@ -163,7 +174,7 @@ static void
 nac_main_window_login_button_logic(NacMainWindow *main_window)
 {
     NacMainWindowPrivate *priv = NULL;
-    const Hune::Core::StringResource& string_resource = Hune::Core::getStringResource();
+    const Hune::Core::StringResource& string_resource = Hune::Core::GlobalVar::getStringResource();
     std::string userid, password, button_label;
 
     if (! NAC_IS_MAIN_WINDOW(main_window)) {
@@ -232,7 +243,7 @@ static void
 nac_main_window_do_login(NacMainWindow *main_window)
 {
     NacMainWindowPrivate *priv = NULL;
-    const Hune::Core::StringResource& string_resource = Hune::Core::getStringResource();
+    const Hune::Core::StringResource& string_resource = Hune::Core::GlobalVar::getStringResource();
     std::string userid, password, button_label;
 
     if (! NAC_IS_MAIN_WINDOW(main_window)) {
@@ -263,7 +274,7 @@ nac_main_window_do_login(NacMainWindow *main_window)
     nac_main_window_login_widget_sensitive(main_window, false);
     hune_ui_change_cursor("wait");
 
-    ionexLogin(userid, password);
+    Ionex::Login(userid, password);
 }
 
 
@@ -299,6 +310,7 @@ nac_main_window_login_result_event(void *target, Hune::Core::Event *event)
     hune_ui_change_cursor("default");
 
     if (*presult == IONEX_LOGIN_RESULT_COMPLETED) {
+        //  로그인 성공
         nac_main_window_login_complete(main_window);
         return;
     } else if (*presult == IONEX_LOGIN_RESULT_CANNOT_FIND_INTERFACE) {
@@ -330,7 +342,7 @@ nac_main_window_do_logout(NacMainWindow *main_window)
     nac_main_window_login_widget_sensitive(main_window, false);
     hune_ui_change_cursor("wait");
 
-    ionexLogout();
+    Ionex::Logout();
 }
 
 static void
@@ -338,7 +350,7 @@ nac_main_window_logout_result_event(void *target, Hune::Core::Event *event)
 {
     NacMainWindow *main_window = NULL;
     NacMainWindowPrivate *priv = NULL;
-    const Hune::Core::StringResource& string_resource = Hune::Core::getStringResource();
+    const Hune::Core::StringResource& string_resource = Hune::Core::GlobalVar::getStringResource();
     std::string *presult = NULL;
     
 
@@ -364,6 +376,8 @@ nac_main_window_logout_result_event(void *target, Hune::Core::Event *event)
     gtk_button_set_label(priv->btn_login, string_resource.get_message_00010().c_str());
     gtk_label_set_text(priv->lbl_login, string_resource.get_message_00009().c_str());
     gtk_label_set_text(priv->lbl_state_txt, string_resource.get_message_00004().c_str());
+
+    priv->is_login_complete = false;
 }
 
 static void
@@ -398,7 +412,10 @@ static void
 nac_main_window_login_complete(NacMainWindow *main_window)
 {
     NacMainWindowPrivate *priv = NULL;
-    const Hune::Core::StringResource &string_resource = Hune::Core::getStringResource();
+    const Hune::Core::ClientConfig &client_config = Hune::Core::GlobalVar::getClientConfig();
+    const Hune::Core::StringResource &string_resource = Hune::Core::GlobalVar::getStringResource();
+    const char *userid = NULL, *passwd = NULL;
+    Hune::Core::Define::UserInfo user_info;
 
     if (! NAC_IS_MAIN_WINDOW(main_window)) {
         return;
@@ -413,13 +430,29 @@ nac_main_window_login_complete(NacMainWindow *main_window)
     gtk_label_set_text(priv->lbl_login, string_resource.get_message_00008().c_str());
     gtk_button_set_label(priv->btn_login, string_resource.get_message_00011().c_str());
     gtk_widget_set_sensitive(GTK_WIDGET(priv->btn_login), true);
+
+    userid = gtk_entry_get_text(priv->etr_id);
+    passwd = gtk_entry_get_text(priv->etr_password);
+
+    user_info.UserId = userid;
+    user_info.Password = passwd;
+    Hune::Core::GlobalVar::setUserInfo(user_info);
+
+    priv->dir_monitor = new Hune::Core::DirectoryMonitor(client_config.getErrorHtmlDir(), NAC_UI_MONITORING_ERROR_HTML, main_window);
+    priv->dir_monitor->Start(IN_CLOSE_WRITE);
+
+    //  최소 한번 실행 후 타이머에서 실행한다.
+    nac_main_window_download_policy_script(main_window);
+    priv->download_policy_timer_id = g_timeout_add(60000, nac_main_window_download_and_execute_policy_timer_func, main_window);
+
+    priv->is_login_complete = true;
 }
 
 static void 
 nac_main_window_login_associated(NacMainWindow *main_window)
 {
     NacMainWindowPrivate *priv = NULL;
-    const Hune::Core::StringResource &string_resource = Hune::Core::getStringResource();
+    const Hune::Core::StringResource &string_resource = Hune::Core::GlobalVar::getStringResource();
     std::string label_message, message;
 
     if (! NAC_IS_MAIN_WINDOW(main_window)) {
