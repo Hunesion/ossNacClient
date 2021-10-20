@@ -8,4 +8,4 @@ add_library(hune_ui
             nacmainwindow.cpp
             )
 
-TARGET_LINK_LIBRARIES(hune_ui ${GTK3_LIBRARIES} hune_core)
+TARGET_LINK_LIBRARIES(hune_ui ${GTK3_LIBRARIES} ${OPENSSL_LIBRARIES} hune_core)
