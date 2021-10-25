@@ -40,6 +40,7 @@ private:
     HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(int , _port, Port); 
     HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(std::string , _scriptDir, ScriptDir);
     HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(std::string , _errorHtmlDir, ErrorHtmlDir);
+    HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(std::string , _ionexDir, IonexDir);
 
 
 }; 

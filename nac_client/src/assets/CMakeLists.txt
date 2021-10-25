@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.8)
 
 set(RESOURCE_LIST
     style.css
+    nac-web-view-window.ui
     nac-main-window.ui
     main_logo.png
 )
