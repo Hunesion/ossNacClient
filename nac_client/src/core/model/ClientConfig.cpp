@@ -22,6 +22,7 @@
 #define NAC_CONFIG_PORT                         "Port"
 #define NAC_CONFIG_SCRIPT_DIR                   "ScriptDir"
 #define NAC_CONFIG_ERROR_HTML_DIR               "ErrorHtmlDir"
+#define NAC_CONFIG_IONEX_DIR                    "IonexDir"
 
 
 
@@ -70,6 +71,7 @@ void ClientConfig::readConfigini() {
     if (this->_errorHtmlDir.length() > 0) {
         FileUtils::createDirIfnotExist(this->_errorHtmlDir.c_str());
     }
+    this->_ionexDir = this->_iniMgr.getString(NAC_CONFIG_KEY_MAIN, NAC_CONFIG_IONEX_DIR);
 }
 
 bool ClientConfig::writeConfigini() {
