@@ -1,5 +1,7 @@
 #include "nacmainwindow.h"
 #include "huneuicommon.h"
+#include "nacwebviewwindow.h"
+#include "../core/DirectoryMonitor.h"
 #include <string>
 
 //////////  구현부  ////////
@@ -13,6 +15,10 @@ typedef struct _NacMainWindowPrivate NacMainWindowPrivate;
 struct _NacMainWindowPrivate
 {
     /* 소스에서 정의 */
+    int download_policy_timer_id;
+    Hune::Core::DirectoryMonitor *dir_monitor;
+    bool is_login_complete;
+    NacWebViewWindow *webview_window;
 
     /* template에서 정의 */
     GtkImage      *img_main_logo;
@@ -55,11 +61,20 @@ static void nac_main_window_do_logout(NacMainWindow *main_window);
 
 static void nac_main_window_logout_result_event(void *target, Hune::Core::Event *event);
 
+static void nac_main_window_logout_dispose(NacMainWindow *main_window);
+
 static void nac_main_window_login_widget_sensitive(NacMainWindow *main_window, bool is_sensitive);
 
 static void nac_main_window_login_complete(NacMainWindow *main_window);
 
 static void nac_main_window_login_associated(NacMainWindow *main_window);
+
+static void nac_main_window_download_policy_script(NacMainWindow *main_window);
+
+static void nac_main_window_error_html_dir_monitoring_event(void *target, Hune::Core::Event *event);
+
+static gboolean nac_main_window_download_and_execute_policy_timer_func(gpointer user_data);
+
 
 
 static void 
@@ -71,6 +86,9 @@ nac_main_window_init (NacMainWindow *win)
     priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(win);
 
     s_win = win ; 
+    priv->download_policy_timer_id = 0;
+    priv->dir_monitor = NULL;
+    priv->is_login_complete = false;
 
     //  Signal (Event) 함수 연결
     //  key release
@@ -99,6 +117,7 @@ nac_main_window_init (NacMainWindow *win)
     if (event_mgr != NULL) {
         event_mgr->addEventListener(win, HUNE_CORE_IONEX_LOGIN, HUNE_CALLBACK_CLS_STATIC_2(nac_main_window_login_result_event));
         event_mgr->addEventListener(win, HUNE_CORE_IONEX_LOGOUT, HUNE_CALLBACK_CLS_STATIC_2(nac_main_window_logout_result_event));
+        event_mgr->addEventListener(win, NAC_UI_MONITORING_ERROR_HTML, HUNE_CALLBACK_CLS_STATIC_2(nac_main_window_error_html_dir_monitoring_event));
     }
 
     Ionex::Init();
@@ -377,7 +396,40 @@ nac_main_window_logout_result_event(void *target, Hune::Core::Event *event)
     gtk_label_set_text(priv->lbl_login, string_resource.get_message_00009().c_str());
     gtk_label_set_text(priv->lbl_state_txt, string_resource.get_message_00004().c_str());
 
+    nac_main_window_logout_dispose(main_window);
+
     priv->is_login_complete = false;
+}
+
+static void
+nac_main_window_logout_dispose(NacMainWindow *main_window) 
+{
+    NacMainWindowPrivate *priv = NULL;
+
+    if (! NAC_IS_MAIN_WINDOW(main_window)) {
+        return;
+    }
+
+    priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(main_window);
+    if (! priv) {
+        return;
+    }
+
+    if (priv->dir_monitor) {
+        priv->dir_monitor->Stop();
+        delete priv->dir_monitor;
+        priv->dir_monitor = NULL;
+    }
+
+    if (priv->download_policy_timer_id > 0) {
+        g_source_remove(priv->download_policy_timer_id);
+        priv->download_policy_timer_id = 0;
+    }
+
+    if (priv->webview_window) {
+        gtk_widget_destroy(GTK_WIDGET(priv->webview_window));
+        priv->webview_window = NULL;
+    }
 }
 
 static void
@@ -480,4 +532,84 @@ nac_main_window_login_associated(NacMainWindow *main_window)
     }
 
     gtk_label_set_text(priv->lbl_state_txt, message.c_str());
+}
+
+static void
+nac_main_window_download_policy_script(NacMainWindow *main_window)
+{
+    NacMainWindowPrivate *priv = NULL;
+    const Hune::Core::Define::UserInfo &user_info = Hune::Core::GlobalVar::getUserInfo();
+
+    if (! NAC_IS_MAIN_WINDOW(main_window)) {
+        return;
+    }
+
+    priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(main_window);
+    if (! priv) {
+        return;
+    }
+
+    Ionex::DownloadAndExecuteScript(user_info.UserId);
+}
+
+static void 
+nac_main_window_error_html_dir_monitoring_event(void *target, Hune::Core::Event *event)
+{
+    NacMainWindow *main_window = NULL;
+    NacMainWindowPrivate *priv = NULL;
+    Hune::Core::DmParam *param = NULL;
+    std::string uri;
+ 
+    if (! NAC_IS_MAIN_WINDOW(target)) {
+        return;
+    }
+
+    main_window = NAC_MAIN_WINDOW(target);
+
+    priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(main_window);
+    if (! priv) {
+        return;
+    }
+
+    if (! event->getUserData()) {
+        return;
+    }
+    param = (Hune::Core::DmParam*)event->getUserData();
+
+    g_print("moniter : %s \n", param->filename.c_str());
+
+    if (priv->webview_window) {
+        gtk_widget_destroy(GTK_WIDGET(priv->webview_window));
+    }
+    priv->webview_window = nac_web_view_window_new(GTK_WINDOW(main_window));
+    if (! priv->webview_window) {
+        return;
+    }
+
+    Hune::Core::StringUtils::format(uri, "file://%s/%s", param->dir.c_str(), param->filename.c_str());
+    nac_web_view_window_show(priv->webview_window, uri.c_str());
+
+}
+
+static gboolean
+nac_main_window_download_and_execute_policy_timer_func(gpointer user_data)
+{
+    NacMainWindow *main_window = NULL;
+    NacMainWindowPrivate *priv = NULL;
+    bool rv = false;
+
+    if (! NAC_IS_MAIN_WINDOW(user_data)) {
+        return rv;
+    }
+    main_window = NAC_MAIN_WINDOW(user_data);
+
+    priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(main_window);
+    if (! priv) {
+        return rv;
+    }
+
+    nac_main_window_download_policy_script(main_window);
+
+    rv = true;
+    return rv;
 }
