@@ -94,14 +94,21 @@ namespace Logger{
                 {
                     bufferSize = nret + 3;
                     delete[] buf;
+                    buf = nullptr;
                 }
             }
             else 
             {	
                 bufferSize *= 2;
                 delete[] buf;
+                buf = nullptr;
             }
         } while (true);
+        
+        if (buf == nullptr) {
+            return;
+        }
+
         buf[nret] = '\n';
         buf[++nret] = '\0';
 
@@ -113,7 +120,7 @@ namespace Logger{
 
         if (buf) {
             delete[] buf;
-            buf = NULL;
+            buf = nullptr;
         }
     }
 }
