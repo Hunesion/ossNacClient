@@ -102,6 +102,7 @@ void DirectoryMonitor::InotifyHandler(const struct inotify_event *event) {
         if (data) {
             DmParam *param = (DmParam*)data;
             delete param;
+            param = nullptr;
         }
     });
 }
