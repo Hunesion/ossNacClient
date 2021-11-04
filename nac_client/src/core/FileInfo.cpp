@@ -21,22 +21,16 @@ _exist(false){
     const char *tmp = nullptr ; 
     memset(&(this->_stat), 0 , sizeof(struct stat)); 
     if (path == nullptr) return ; 
+
+    char *__full_path = realpath(path, NULL);
+    this->_fullPath = std::string(__full_path);
+    
+    free(__full_path);
     this->_fullPath = path ; 
     if (this->_fullPath.empty()) return ; 
 
-    site = this->_fullPath.size() - 1;
-    if (this->_fullPath.size() > 1 && this->_fullPath.at(site) == PATH_SEPERATOR){
-        StringUtils::rtrim(this->_fullPath, PATH_SEPERATOR);
-
-        // if _fullPath = "//////" => _fullPath = "/"
-        if (this->_fullPath.empty()) {
-            this->_fullPath = PATH_SEPERATOR;
-        }
-    }
-
-    tmp = this->_fullPath.c_str(); 
-
-    rv = stat(tmp , &(this->_stat)); 
+    // stat allows relative path
+    rv = stat(path, &(this->_stat)); 
     if (rv == 0) {
         this->_exist = true ; 
     }
