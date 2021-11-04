@@ -76,35 +76,35 @@ bool FileInfo::isExist() const {
 
 bool FileInfo::isFile() const {
     bool rv = false ; 
-    if (!this->_exist) return rv ; 
+    if (!this->isExist()) return rv ; 
     rv = S_ISREG(this->_stat.st_mode) ; 
     return rv ; 
 }
 
 bool FileInfo::isDirectory() const{
     bool rv = false ; 
-    if (!this->_exist) return rv ; 
+    if (!this->isExist()) return rv ; 
     rv = S_ISDIR(this->_stat.st_mode) ; 
     return rv ; 
 }
 
 bool FileInfo::isReadable() const {
     bool rv = false ; 
-    if (!this->_exist) return rv ; 
+    if (!this->isExist()) return rv ; 
     rv = (this->_stat.st_mode & S_IRUSR) == S_IRUSR ; 
     return rv ; 
 }
 
 bool FileInfo::isWritable() const {
     bool rv = false ; 
-    if (!this->_exist) return rv ; 
+    if (!this->isExist()) return rv ; 
     rv = (this->_stat.st_mode & S_IWUSR) == S_IWUSR ; 
     return rv ; 
 }
 
 long long  FileInfo::length() const{
     long long rv = 0L ;
-    if (!this->_exist) return rv ; 
+    if (!this->isExist()) return rv ; 
     if (!this->isFile()) return rv ; 
     return this->_stat.st_size; 
 }
