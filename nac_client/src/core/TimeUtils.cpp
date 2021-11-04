@@ -24,13 +24,8 @@ namespace TimeUtils
     {
         std::tm rv;
         std::time_t time = std::mktime(&tm);
-        int day_abs = abs(day);
 
-        if (day > 0) {
-            time += 60 * 60 * 24 * day_abs;
-        } else {
-            time -= 60 * 60 * 24 * day_abs;
-        }
+        time += 60 * 60 * 24 * day;
         
         localtime_r(&time, &rv);
         return rv;
@@ -66,16 +61,8 @@ namespace TimeUtils
         if (minute != 0)
         {
             //result += String.Format("{0:D2}", minute) + "분";
-            rv += StringUtils::format("%02d분", minute);
+            rv += StringUtils::format("%d분", minute);
         }
-
-        //04분과 같이 0으로 시작하는 경우
-        if (StringUtils::startsWith(rv, "0") == true) 
-        {
-            rv = rv.substr(1, rv.length() - 1);
-        }
-
-        StringUtils::trim(rv);
 
         return rv;
     }
