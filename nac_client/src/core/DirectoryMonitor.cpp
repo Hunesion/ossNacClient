@@ -68,7 +68,7 @@ void DirectoryMonitor::MonitoringThreadFunc(DirectoryMonitor *self) {
 
         length = read(self->_fdMonitor, inotifyBuffer, INOTIFY_BUFFER);
         while (index < length) {
-            struct inotify_event *event = (struct inotify_event*)&inotifyBuffer[index];
+            struct inotify_event *event = reinterpret_cast<inotify_event *>(&inotifyBuffer[index]);
             if (event->mask & IN_IGNORED) {
                 //  inotify_rm_watch가 호출됨
                 break;
