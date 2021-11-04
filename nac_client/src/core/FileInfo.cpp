@@ -26,6 +26,8 @@ _exist(false){
     this->_fullPath = std::string(__full_path);
     
     free(__full_path);
+    __full_path = nullptr;
+
     this->_fullPath = path ; 
     if (this->_fullPath.empty()) return ; 
 
