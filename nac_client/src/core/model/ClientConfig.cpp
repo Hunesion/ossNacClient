@@ -167,6 +167,7 @@ bool ClientConfig::existUserConfigDirIfNotCreate() const {
     if (error) {
         //FTC_LOG("fail existConfigDirIfNotCreate : %s", error->message);
         g_error_free(error);
+        error = nullptr;
     }
 
     return rv;
