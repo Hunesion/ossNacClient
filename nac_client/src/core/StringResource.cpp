@@ -56,6 +56,7 @@ GKeyFile* StringResource::loadStringResourceFile() {
         if (error) {
             //FTC_LOG("g_key_file_load_from_data fail : %s", error->message);
             g_error_free(error);
+            error = nullptr;
         }
     }
     

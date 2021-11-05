@@ -91,6 +91,7 @@ int hune_open_default_uri(const std::string &param)
     }
 
     g_error_free(error);
+    error = nullptr;
 
     return 1;
 }
