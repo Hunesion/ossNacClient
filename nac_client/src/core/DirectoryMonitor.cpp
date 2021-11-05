@@ -1,5 +1,6 @@
 #include "DirectoryMonitor.h"
 #include "core.h"
+#include <new>
 
 #define     INOTIFY_EVENT_SIZE  (sizeof(struct inotify_event))
 #define     INOTIFY_BUFFER      (1024 * (INOTIFY_EVENT_SIZE + 16))
@@ -92,7 +93,11 @@ void DirectoryMonitor::InotifyHandler(const struct inotify_event *event) {
         return;
     }   
 
-    dmParam = new DmParam();
+    dmParam = new (std::nothrow) DmParam();
+    if (!dmParam) {
+        return;
+    }
+
     dmParam->dir = this->_dir;
     dmParam->filename = event->name;
     dmParam->mask = event->mask;
