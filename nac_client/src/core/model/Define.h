@@ -3,8 +3,12 @@
 #include "../macro.h"
 #include <string>
 
+#define HUNE_APPLICATION_ETC_PATH   "/etc/ionenac" 
+
 
 BEGIN_HUNE_CORE
+
+
 namespace Define
 {
 class UserInfo {
