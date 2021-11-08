@@ -112,28 +112,25 @@ nac_web_view_window_new (GtkWindow *parent)
     return window;
 }
 
-GtkResponseType
+void
 nac_web_view_window_show(NacWebViewWindow* window, const char *uri)
 {
     NacWebViewWindowPrivate *priv = NULL;
     GtkResponseType rv = GtkResponseType::GTK_RESPONSE_CANCEL;
     if (! NAC_IS_WEB_VIEW_WINDOW(window)) {
-        return rv;
+        return;
     }
     priv = (NacWebViewWindowPrivate*)nac_web_view_window_get_instance_private(window);
     if (! priv) {
-        return rv;
+        return;
     }
 
     nac_web_view_window_create_webview(window, uri);
 
     gtk_window_set_position(GTK_WINDOW(window), GtkWindowPosition::GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_widget_show(GTK_WIDGET(window));
-    gtk_main();
 
     rv = priv->response;
-
-    return rv;
 }
 
 static void 
@@ -162,7 +159,6 @@ nac_web_view_window_on_delete_event(GtkWidget *widget, GdkEvent *event, gpointer
 {
     //  로그인윈도우를 호출한 윈도우에서 삭제처리하기 위함
     gtk_widget_hide(widget);
-    gtk_main_quit();
     return true;
 }
 
