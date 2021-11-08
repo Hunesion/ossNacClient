@@ -514,6 +514,9 @@ nac_main_window_login_complete(NacMainWindow *main_window)
     nac_main_window_download_policy_script(main_window);
     priv->download_policy_timer_id = g_timeout_add(60000, nac_main_window_download_and_execute_policy_timer_func, main_window);
 
+    //  로그인 성공 시 최소화 한다.
+    gtk_window_iconify(GTK_WINDOW(main_window));
+
     priv->is_login_complete = true;
 }
 
