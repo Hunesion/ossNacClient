@@ -15,7 +15,7 @@ static NacApplication *s_app = NULL ;
 
 
 gpointer 
-nac_get_application()
+hune_ui_get_application()
 {
   return s_app;
 }
