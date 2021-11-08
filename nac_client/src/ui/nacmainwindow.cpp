@@ -2,6 +2,7 @@
 #include "huneuicommon.h"
 #include "nacwebviewwindow.h"
 #include "../core/DirectoryMonitor.h"
+#include "../core/ClientUpdater.h"
 #include <string>
 
 //////////  구현부  ////////
@@ -81,7 +82,9 @@ static void
 nac_main_window_init (NacMainWindow *win)
 {
     NacMainWindowPrivate *priv = NULL;
+    const Hune::Core::ClientConfig &client_config = Hune::Core::GlobalVar::getClientConfig();
     Hune::Core::EventManager *event_mgr = Hune::Core::EventManager::getInstance();
+    Hune::Core::ClientUpdater client_updater;
     gtk_widget_init_template (GTK_WIDGET (win));
     priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(win);
 
@@ -121,6 +124,14 @@ nac_main_window_init (NacMainWindow *win)
     }
 
     Ionex::Init();
+
+    if (client_config.getAutoUpdate()) {
+        if (client_updater.isUpdate()) {
+            client_updater.update();
+            event_mgr->dispatchEvent(NAC_UI_APPLICATION_QUIT, hune_ui_get_application());
+        }
+    }
+    
 }
 
 static void
@@ -295,7 +306,6 @@ nac_main_window_do_login(NacMainWindow *main_window)
 
     Ionex::Login(userid, password);
 }
-
 
 static void
 nac_main_window_login_result_event(void *target, Hune::Core::Event *event)
@@ -580,6 +590,7 @@ nac_main_window_error_html_dir_monitoring_event(void *target, Hune::Core::Event 
 
     if (priv->webview_window) {
         gtk_widget_destroy(GTK_WIDGET(priv->webview_window));
+
     }
     priv->webview_window = nac_web_view_window_new(GTK_WINDOW(main_window));
     if (! priv->webview_window) {
@@ -588,7 +599,6 @@ nac_main_window_error_html_dir_monitoring_event(void *target, Hune::Core::Event 
 
     Hune::Core::StringUtils::format(uri, "file://%s/%s", param->dir.c_str(), param->filename.c_str());
     nac_web_view_window_show(priv->webview_window, uri.c_str());
-
 }
 
 static gboolean
