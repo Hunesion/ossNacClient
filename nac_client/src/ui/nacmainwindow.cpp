@@ -508,7 +508,7 @@ nac_main_window_login_complete(NacMainWindow *main_window)
     Hune::Core::GlobalVar::setUserInfo(user_info);
 
     priv->dir_monitor = new Hune::Core::DirectoryMonitor(client_config.getErrorHtmlDir(), NAC_UI_MONITORING_ERROR_HTML, main_window);
-    priv->dir_monitor->Start(IN_CLOSE_WRITE);
+    priv->dir_monitor->Start(IN_CLOSE_WRITE | IN_DELETE);
 
     //  최소 한번 실행 후 타이머에서 실행한다.
     nac_main_window_download_policy_script(main_window);
@@ -597,15 +597,17 @@ nac_main_window_error_html_dir_monitoring_event(void *target, Hune::Core::Event 
 
     if (priv->webview_window) {
         gtk_widget_destroy(GTK_WIDGET(priv->webview_window));
-
+        priv->webview_window = NULL;
     }
-    priv->webview_window = nac_web_view_window_new(GTK_WINDOW(main_window));
-    if (! priv->webview_window) {
-        return;
+    if (param->mask & IN_CLOSE_WRITE) {
+        priv->webview_window = nac_web_view_window_new(GTK_WINDOW(main_window));
+        if (priv->webview_window) {
+            Hune::Core::StringUtils::format(uri, "file://%s/%s", param->dir.c_str(), param->filename.c_str());
+            nac_web_view_window_show(priv->webview_window, uri.c_str());
+        }
     }
-
-    Hune::Core::StringUtils::format(uri, "file://%s/%s", param->dir.c_str(), param->filename.c_str());
-    nac_web_view_window_show(priv->webview_window, uri.c_str());}
+    
+}
 
 static gboolean
 nac_main_window_download_and_execute_policy_timer_func(gpointer user_data)
