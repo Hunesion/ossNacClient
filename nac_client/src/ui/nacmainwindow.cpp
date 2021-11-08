@@ -85,6 +85,7 @@ nac_main_window_init (NacMainWindow *win)
     const Hune::Core::ClientConfig &client_config = Hune::Core::GlobalVar::getClientConfig();
     Hune::Core::EventManager *event_mgr = Hune::Core::EventManager::getInstance();
     Hune::Core::ClientUpdater client_updater;
+    GdkPixbuf *icon = NULL;
     gtk_widget_init_template (GTK_WIDGET (win));
     priv = (NacMainWindowPrivate*)nac_main_window_get_instance_private(win);
 
@@ -122,6 +123,12 @@ nac_main_window_init (NacMainWindow *win)
         event_mgr->addEventListener(win, HUNE_CORE_IONEX_LOGOUT, HUNE_CALLBACK_CLS_STATIC_2(nac_main_window_logout_result_event));
         event_mgr->addEventListener(win, NAC_UI_MONITORING_ERROR_HTML, HUNE_CALLBACK_CLS_STATIC_2(nac_main_window_error_html_dir_monitoring_event));
     }
+
+    //  아이콘
+    icon = gdk_pixbuf_new_from_resource("/com/hunesion/nacclient/nacclient.png", NULL);
+    gtk_window_set_icon(GTK_WINDOW(win), icon);
+    g_object_unref(icon);
+    icon = NULL;
 
     Ionex::Init();
 
@@ -598,8 +605,7 @@ nac_main_window_error_html_dir_monitoring_event(void *target, Hune::Core::Event 
     }
 
     Hune::Core::StringUtils::format(uri, "file://%s/%s", param->dir.c_str(), param->filename.c_str());
-    nac_web_view_window_show(priv->webview_window, uri.c_str());
-}
+    nac_web_view_window_show(priv->webview_window, uri.c_str());}
 
 static gboolean
 nac_main_window_download_and_execute_policy_timer_func(gpointer user_data)
