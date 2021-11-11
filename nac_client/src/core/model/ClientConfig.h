@@ -29,6 +29,7 @@ public:
     std::string getUserHomeDirPath() const;   
     std::string getIniPath(bool isHomeDir) const;
     bool existUserConfigDirIfNotCreate() const;
+    std::string getUserDownloadDirPath() const;
 private:
     
 
@@ -41,7 +42,7 @@ private:
     HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(std::string , _scriptDir, ScriptDir);
     HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(std::string , _errorHtmlDir, ErrorHtmlDir);
     HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(std::string , _ionexDir, IonexDir);
-
+    HUNE_SYNTHESIZE_READONLY_PASS_BY_REF(bool , _autoUpdate, AutoUpdate); 
 
 }; 
 END_HUNE_CORE
