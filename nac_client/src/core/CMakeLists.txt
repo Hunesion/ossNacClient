@@ -5,6 +5,7 @@ add_library(hune_core
             model/GlobalVar.cpp
             model/StringResource.cpp
             base64.cpp
+            ClientUpdater.cpp
             core.cpp
             crypto.cpp
             DirectoryMonitor.cpp
