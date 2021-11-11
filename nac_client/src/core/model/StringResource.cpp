@@ -1,6 +1,6 @@
 #include "StringResource.h"
+#include "Define.h"
 
-#define HUNE_APPLICATION_ETC_PATH   "/etc/nac" 
 
 #define HUNE_READ_STRING_RESOURCE(varName, stringName)\
     value = NULL; \
