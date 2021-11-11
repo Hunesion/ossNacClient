@@ -5,6 +5,7 @@ set(RESOURCE_LIST
     nac-web-view-window.ui
     nac-main-window.ui
     main_logo.png
+    nacclient.png
 )
 
 compile_gresources(RESOURCE_LIST
