@@ -3,15 +3,10 @@
 #include <pwd.h>
 #include <sstream>
 #include "ClientConfig.h"
+#include "Define.h"
 #include "../core.h"
 
 #define NAC_CLIENT_INI_NAME    "client.ini"
-#ifdef HUNE_DEBUG
-#define NAC_CLIENT_INI_PATH    "../../client.ini"
-#else
-#define NAC_CLIENT_INI_PATH    "/etc/nac/client.ini"
-#endif
-
 
 
 //  Main Key
@@ -23,6 +18,7 @@
 #define NAC_CONFIG_SCRIPT_DIR                   "ScriptDir"
 #define NAC_CONFIG_ERROR_HTML_DIR               "ErrorHtmlDir"
 #define NAC_CONFIG_IONEX_DIR                    "IonexDir"
+#define NAC_CONFIG_AUTO_UPDATE                  "AutoUpdate"
 
 
 
@@ -72,6 +68,7 @@ void ClientConfig::readConfigini() {
         FileUtils::createDirIfnotExist(this->_errorHtmlDir.c_str());
     }
     this->_ionexDir = this->_iniMgr.getString(NAC_CONFIG_KEY_MAIN, NAC_CONFIG_IONEX_DIR);
+    this->_autoUpdate = this->_iniMgr.getInt(NAC_CONFIG_KEY_MAIN, NAC_CONFIG_AUTO_UPDATE);
 }
 
 bool ClientConfig::writeConfigini() {
@@ -124,8 +121,15 @@ END:
 }
 
 std::string ClientConfig::getIniPath(bool isHomeDir) const {
-    std::string rv = NAC_CLIENT_INI_PATH;
+    std::string rv;
     std::string iniUserPath;
+
+#ifdef HUNE_DEBUG
+    rv = "../../client.ini";
+#else
+    rv = HUNE_APPLICATION_ETC_PATH;
+    rv.append("/client.ini");
+#endif
 
     StringUtils::format(iniUserPath, "%s/%s", this->getUserConfigDirPath().c_str(), NAC_CLIENT_INI_NAME);
 
@@ -173,6 +177,46 @@ bool ClientConfig::existUserConfigDirIfNotCreate() const {
     return rv;
 }
 
+std::string ClientConfig::getUserDownloadDirPath() const {
+    std::string rv, homeDir;
+    std::stringstream ssEng, ssKor;
+    passwd *pwd = nullptr;
+    GFile *downDirEng = nullptr, *downDirKor = nullptr;
 
+    homeDir = this->getUserHomeDirPath();
+
+    ssEng << homeDir;
+    ssEng << "/Downloads";
+    downDirEng = g_file_new_for_path(ssEng.str().c_str());
+    if (downDirEng) {
+        if (g_file_query_exists(downDirEng, nullptr)) {
+            rv = ssEng.str();
+        }
+    }
+
+    if (rv.length() == 0) {
+        ssKor << homeDir;
+        ssKor << "/다운로드";
+        downDirKor = g_file_new_for_path(ssKor.str().c_str());
+        if (downDirKor) {
+            if (g_file_query_exists(downDirKor, nullptr)) {
+                rv = ssKor.str();
+            }
+        }
+    }
+
+END:
+    if (downDirEng) {
+        g_object_unref(downDirEng);
+        downDirEng = nullptr;
+    }
+
+    if (downDirKor) {
+        g_object_unref(downDirKor);
+        downDirKor = nullptr;
+    }
+
+    return rv;
+}
 
 END_HUNE_CORE
