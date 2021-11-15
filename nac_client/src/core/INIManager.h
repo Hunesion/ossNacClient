@@ -20,23 +20,19 @@ public:
 
     bool save(const char *iniPath);
 
-    std::string getString(const char *group, const char *key, const char *def = nullptr);
-    int getInt(const char *group, const char *key, int def = 0);
-    bool getBoolean(const char *group, const char *key, bool def = false);
-    std::map<std::string, std::string> getGroupData(const char *group);
+    virtual std::string getString(const char *group, const char *key, const char *def = nullptr);
+    virtual int getInt(const char *group, const char *key, int def = 0);
+    virtual bool getBoolean(const char *group, const char *key, bool def = false);
+    virtual std::map<std::string, std::string> getGroupData(const char *group);
 
-    void setString(const char *group, const char *key, const char *value);
+    virtual void setString(const char *group, const char *key, const char *value);
     void setString(const char *group, const char *key, const std::string &value);
-    void setInt(const char *group, const char *key, int value);
+    virtual void setInt(const char *group, const char *key, int value);
     void setInt(const char *group, const char *key, bool value);
-    void setBoolean(const char *group, const char *key, bool value);
-    void setGroupData(const char *group, const std::map<std::string, std::string> &groupData);
+    virtual void setBoolean(const char *group, const char *key, bool value);
+    virtual void setGroupData(const char *group, const std::map<std::string, std::string> &groupData);
 
-private:
-    std::string getEncString(const char *plainStr);
-    std::string getDecString(const char *encStr);
-
-private:
+protected:
     GKeyFile *_keyfile;
 };
 
