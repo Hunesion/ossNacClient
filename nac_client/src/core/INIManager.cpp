@@ -2,7 +2,8 @@
 #include <string>
 #include "INIManager.h"
 #include "core.h"
-
+#include "../jtac_core/ARIAReference050117.h"
+#include "../jtac_core/NgsUtils.h"
 
 BEGIN_HUNE_CORE
 
@@ -73,7 +74,7 @@ bool INIManager::save(const char *iniPath) {
 
     rv = g_key_file_save_to_file(this->_keyfile, iniPath, &error); 
     if (error) {
-        g_print("INIManager save error : %s \n", error->message);
+        HUNE_LOG_DEBUG("INIManager save error : %s \n", error->message);
         g_error_free(error);
         error = nullptr;
     }
@@ -97,11 +98,10 @@ std::string INIManager::getString(const char *group, const char *key, const char
     value = g_key_file_get_string(this->_keyfile, group, key, &error);
     if (value) {
         rv = value;
-
         g_free(value);
         value = nullptr;
     } else if (error) {
-        g_print("getString error : %s \n", error->message);
+        HUNE_LOG_DEBUG("getString error : %s \n", error->message);
         g_error_free(error);
         error = nullptr;
     }
@@ -121,7 +121,7 @@ int INIManager::getInt(const char *group, const char *key, int def) {
 
     if (error) {
         rv = def;
-        g_print("getInt error : %s \n", error->message);
+        HUNE_LOG_DEBUG("getInt error : %s \n", error->message);
         g_error_free(error);
         error = nullptr;
     }
@@ -141,7 +141,7 @@ bool INIManager::getBoolean(const char *group, const char *key, bool def) {
     
     if (error) {
         rv = def;
-        g_print("getBoolean error : %s \n", error->message);
+        HUNE_LOG_DEBUG("getBoolean error : %s \n", error->message);
         g_error_free(error);
         error = nullptr;
     }
@@ -224,7 +224,7 @@ void INIManager::setGroupData(const char *group, const std::map<std::string, std
     }
 
     for (auto iter = groupData.begin(); iter != groupData.end(); iter++) {
-        g_key_file_set_string(this->_keyfile, group, iter->first.c_str(), iter->second.c_str());
+        this->setString(group, iter->first.c_str(), iter->second.c_str());
     }
 }
 
