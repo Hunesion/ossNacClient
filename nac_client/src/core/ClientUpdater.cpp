@@ -28,12 +28,8 @@ bool ClientUpdater::isUpdate() {
 
     newVer = FileUtils::fileReadString(newVerPath.c_str());
 
-#ifdef HUNE_DEBUG
-    curVer = "1.0.0.1";
-#else
     curVerPath = "/etc/ionenac/version.txt";
     curVer = FileUtils::fileReadString(curVerPath.c_str());
-#endif
     
     if (curVer.compare(newVer) == 0) {
         return false;
