@@ -114,9 +114,6 @@ nac_application_init_config(NacApplication *app)
   
   Hune::Core::hune_core_init();
   hune_event_callback_init();
-  // ftc_dbus_server_init(); 
-  
-  //g_action_map_add_action_entries(G_ACTION_MAP(app), app_entries, G_N_ELEMENTS(app_entries), app);
 
   gtk_application_set_accels_for_action(GTK_APPLICATION(app), "app.quit", quit_accesls);
 
