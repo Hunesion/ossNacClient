@@ -1,5 +1,6 @@
 # ossNacClient
 이  프로젝트는  개방형OS 기반의 네트워크접근통제(NAC) 클라이언트를  개발합니다.
+
 ### 개발대상 개방형OS
 * 구름OS
 * 티맥스OS
@@ -14,19 +15,24 @@
    - 기업 내부 네트워크 사용현황 관리 필요성 증대
    - 비인가 사용자/단말 관리 필요 
 
-![image](https://user-images.githubusercontent.com/65996550/142129383-88e1f20f-1fb6-493d-a040-b2ec410ba5ba.png)
-
+   ![image](https://user-images.githubusercontent.com/65996550/142129383-88e1f20f-1fb6-493d-a040-b2ec410ba5ba.png)
 
 * 보안사고 대응 필요
    - 보안사고 발생에 대한 내부 네트워크 접근 통제 필요
    - 필수 보안 프로그램 설치 및 실행 점검
    - 네트워크 접근 단말의 무결성 점검
 
+   ![image](https://user-images.githubusercontent.com/65996550/142129489-77093234-8cce-4943-b7c9-42b46dd30863.png)
+
 * 컴플라이언스 준수 필요
    - 개인정보보호법, 정보통신망법
    - ISMS, ISMS-P, ISO27001 등 정보보안 관련 인증 획득/운영이 필요한 경우
    - 전자금융감독규정
    - 국가 정보보안 기본 지침 
+
+### 네트워크접근통제(NAC) 개념도
+
+   ![image](https://user-images.githubusercontent.com/65996550/142129628-33ef261a-cfa0-454e-8f16-b14bc744b279.png)
 
 
 # **주요 개발항목** 
