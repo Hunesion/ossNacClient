@@ -88,7 +88,7 @@ void DirectoryMonitor::MonitoringThreadFunc(DirectoryMonitor *self) {
 
 void DirectoryMonitor::InotifyHandler(const struct inotify_event *event) {
     EventManager *eventMgr = EventManager::getInstance();
-    DmParam *dmParam = NULL;
+    DmParam *dmParam = nullptr;
     if (! eventMgr) {
         return;
     }   
