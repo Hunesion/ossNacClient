@@ -2,7 +2,7 @@
 
 LANG_CONFIG="ko_KR.UTF-8"
 
-NEEDEDFILES="/run/test2"
+NEEDEDFILES="/run/test"
 NEEDED="/usr/sbin/cups-browsed"
 UNNEEDED=""
 
